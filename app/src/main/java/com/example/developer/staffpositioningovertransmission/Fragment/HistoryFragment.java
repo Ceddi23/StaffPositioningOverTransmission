@@ -2,6 +2,7 @@ package com.example.developer.staffpositioningovertransmission.Fragment;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -11,23 +12,27 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.text.InputType;
+import android.widget.TimePicker;
 
 import com.example.developer.staffpositioningovertransmission.R;
 
 import java.util.Calendar;
 
-
-
 public class HistoryFragment extends Fragment {
-    int mYear;
-    int mMonth;
-    int mDay;
+
+    int timePickFlg;
+
+    private class CalendarDates {
+        int mYear;
+        int mMonth;
+        int mDay;
+    }
 
     public HistoryFragment() {
         // Required empty public constructor
     }
 
-    // TODO: Rename and change types and number of parameters
     public static HistoryFragment newInstance() {
         HistoryFragment fragment = new HistoryFragment();
         Bundle args = new Bundle();
@@ -38,91 +43,137 @@ public class HistoryFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
+                             final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_history, container, false);
 
-        final Button historyButton = view.findViewById(R.id.btnOk);
         final DatePicker datePicker = view.findViewById(R.id.dpDatePicker);
+        final Button historyButton = view.findViewById(R.id.btnOk);
+        final Button okDateTimeButton = view.findViewById(R.id.btnOkTimeDate);
         final EditText dateText = view.findViewById(R.id.dateText);
-        final TextView tvLabel = view.findViewById(R.id.tvLabel);
         final EditText timeFrom = view.findViewById(R.id.timeFromText);
         final EditText timeTo = view.findViewById(R.id.timeToText);
+        final TimePicker timePick = view.findViewById(R.id.tpTimePick);
+
+        final CalendarDates calDate = new CalendarDates();
         final Calendar cal = Calendar.getInstance();
 
+        final String[] MONTHSlist = {"January", "February", "March", "April", "May", "June", "July",
+                "August", "September", "October", "November", "December"};
+        final int timeFromFlg = 1;
+        final int timeToFlg = 2;
+        final int dateFlg = 3;
+
         datePicker.setVisibility(View.INVISIBLE);
+        timePick.setVisibility(View.INVISIBLE);
+        okDateTimeButton.setVisibility(View.INVISIBLE);
+        dateText.setInputType(InputType.TYPE_NULL);
+        timeFrom.setInputType(InputType.TYPE_NULL);
 
         dateText.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                timePickFlg = dateFlg;
                 datePicker.setVisibility(View.VISIBLE);
-                dateText.setVisibility(View.INVISIBLE);
-                historyButton.setVisibility(View.INVISIBLE);
-                tvLabel.setVisibility(View.INVISIBLE);
-                timeFrom.setVisibility(View.INVISIBLE);
-                timeTo.setVisibility(View.INVISIBLE);
+                okDateTimeButton.setVisibility(View.VISIBLE);
+                hidePrimaryControls(dateText, timeFrom, timeTo, historyButton);
             }
         });
 
-        cal.setTimeInMillis(System.currentTimeMillis());
-        datePicker.init(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH), new DatePicker.OnDateChangedListener() {
-            @Override
-            public void onDateChanged(DatePicker datePicker, int year, int month, int dayOfMonth) {
-                dateText.setText(year + "/" + (month + 1) + "/" + dayOfMonth);
-                mDay = dayOfMonth;
-                mYear = year;
-                mMonth = month + 1;
-                datePicker.setVisibility(View.INVISIBLE);
-                dateText.setVisibility(View.VISIBLE);
-                historyButton.setVisibility(View.VISIBLE);
-                tvLabel.setVisibility(View.VISIBLE);
-                timeFrom.setVisibility(View.VISIBLE);
-                timeTo.setVisibility(View.VISIBLE);
+        timeFrom.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                timePickFlg = timeFromFlg;
+                timePick.setVisibility(View.VISIBLE);
+                okDateTimeButton.setVisibility(View.VISIBLE);
+                hidePrimaryControls(dateText, timeFrom, timeTo, historyButton);
+            }
+        });
 
+        timeTo.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                timePickFlg = timeToFlg;
+                timePick.setVisibility(View.VISIBLE);
+                okDateTimeButton.setVisibility(View.VISIBLE);
+                hidePrimaryControls(dateText, timeFrom, timeTo, historyButton);
+            }
+        });
 
+        okDateTimeButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String period = timePick.getCurrentHour() < 12 ? "AM" : "PM";
+                int timePeriod = timePick.getCurrentHour();
+                if (timePeriod > 12) {
+                    timePeriod -= 12;
+                }
+                if (timePickFlg == timeFromFlg) {
+                    timeFrom.setText(timePeriod + ":" + String.format("%02d", timePick.getCurrentMinute()) + " " + period);
+                    timePick.setVisibility(View.INVISIBLE);
+                    okDateTimeButton.setVisibility(View.INVISIBLE);
+                    showPrimaryControls(dateText, timeFrom, timeTo, historyButton);
+                } else if (timePickFlg == timeToFlg) {
+                    timeTo.setText(timePeriod + ":" + String.format("%02d", timePick.getCurrentMinute()) + " " + period);
+                    timePick.setVisibility(View.INVISIBLE);
+                    okDateTimeButton.setVisibility(View.INVISIBLE);
+                    showPrimaryControls(dateText, timeFrom, timeTo, historyButton);
+                } else if (timePickFlg == dateFlg) {
+                    dateText.setText(MONTHSlist[datePicker.getMonth()] + " " + datePicker.getDayOfMonth() + ", " + datePicker.getYear());
+                    calDate.mDay = datePicker.getDayOfMonth();
+                    calDate.mYear = datePicker.getYear();
+                    calDate.mMonth = datePicker.getMonth();
+                    datePicker.setVisibility(View.INVISIBLE);
+                    okDateTimeButton.setVisibility(View.INVISIBLE);
+                    showPrimaryControls(dateText, timeFrom, timeTo, historyButton);
+                }
+                timePick.setCurrentHour(cal.get(Calendar.HOUR_OF_DAY));
+                timePick.setCurrentMinute(cal.get(Calendar.MINUTE));
             }
         });
 
         historyButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
                 AlertDialog.Builder alertadd = new AlertDialog.Builder(view.getContext());
 
-                alertadd.setTitle("Route history (" + mYear + "/" + mMonth + "/" + mDay + ")");
+                alertadd.setTitle("Route history (" + MONTHSlist[calDate.mMonth] + " " + calDate.mDay + "," + calDate.mYear + ")");
                 LayoutInflater factory = LayoutInflater.from(view.getContext());
                 if (!dateText.getText().toString().isEmpty()) {
-                    if (cal.get(Calendar.DAY_OF_MONTH) - 3 > mDay) {
+                    if (calDate.mDay % 2 == 0) {
                         final View view = factory.inflate(R.layout.bluestaff_image_dialog, null);
                         alertadd.setView(view);
                     } else {
-                        final View view = factory.inflate(R.layout.greenstaff_image_dialog, null);
+                        final View view = factory.inflate(R.layout.redstaff_image_dialog, null);
                         alertadd.setView(view);
                     }
-                    alertadd.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
-                        }
-                    });
-                    alertadd.show();
                 } else {
                     alertadd.setTitle("Date not set");
                     alertadd.setMessage("Please select date first");
-                    alertadd.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
-                        }
-                    });
-                    alertadd.show();
                 }
+                alertadd.setPositiveButton("OKAY", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+                alertadd.show();
             }
         });
-
         return view;
     }
+
+    void hidePrimaryControls(EditText dateText, EditText timeFrom, EditText timeTo, Button historyButton) {
+        dateText.setVisibility(View.INVISIBLE);
+        historyButton.setVisibility(View.INVISIBLE);
+        timeFrom.setVisibility(View.INVISIBLE);
+        timeTo.setVisibility(View.INVISIBLE);
+    }
+
+    void showPrimaryControls(EditText dateText, EditText timeFrom, EditText timeTo, Button historyButton) {
+        dateText.setVisibility(View.VISIBLE);
+        historyButton.setVisibility(View.VISIBLE);
+        timeFrom.setVisibility(View.VISIBLE);
+        timeTo.setVisibility(View.VISIBLE);
+    }
+
+
 }

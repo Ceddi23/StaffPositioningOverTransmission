@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -18,8 +19,18 @@
         android:id="@+id/custom_tasklist_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/custom_tasklist_task"
-        android:layout_below="@+id/custom_tasklist_task"
-        android:text="Status: "
+        android:layout_alignBottom="@+id/custom_tasklist_status_icon"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="14dp"
+        android:text="Delivered"
         android:textColor="@android:color/black" />
+
+    <ImageView
+        android:id="@+id/custom_tasklist_status_icon"
+        android:layout_width="40dp"
+        android:layout_height="30dp"
+        android:layout_alignTop="@+id/custom_tasklist_task"
+        android:layout_marginEnd="14dp"
+        android:layout_toStartOf="@+id/custom_tasklist_status"
+        app:srcCompat="@drawable/task_status_delivered" />
 </RelativeLayout>

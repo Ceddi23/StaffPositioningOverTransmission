@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/task_item_detail"
+    android:orientation="vertical"
+    android:paddingTop="10dp"
+    android:paddingLeft="20dp">
+
+    <TextView
+        android:id="@+id/custom_tasklist_detail_clientname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Client: Microsoft"
+        android:textColor="@android:color/black" />
+
+    <TextView
+        android:id="@+id/custom_tasklist_detail_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Address: Makati City"
+        android:textColor="@android:color/black"/>
+
+    <TextView
+        android:id="@+id/custom_tasklist_detail_associate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Associate: James O'Brien"
+        android:textColor="@android:color/black"/>
+
+    <TextView
+        android:id="@+id/custom_tasklist_detail_contactnumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Contact Number: 0917-156-7894"
+        android:textColor="@android:color/black"/>
+</LinearLayout>

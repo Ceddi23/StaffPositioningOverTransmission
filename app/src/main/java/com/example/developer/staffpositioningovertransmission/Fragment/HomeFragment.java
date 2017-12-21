@@ -1,15 +1,23 @@
 package com.example.developer.staffpositioningovertransmission.Fragment;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.example.developer.staffpositioningovertransmission.MainActivity;
 import com.example.developer.staffpositioningovertransmission.R;
 
 import  android.support.v4.app.Fragment;
@@ -60,8 +68,9 @@ public class HomeFragment extends Fragment {
         final TextView home_text_location = (TextView) view.findViewById(R.id.home_location);
         final TextView home_text_longitude = (TextView) view.findViewById(R.id.home_longitude);
         final TextView home_text_latitude = (TextView) view.findViewById(R.id.home_latitude);
-        final TextView home_text_client_name = view.findViewById(R.id.textView9);
-        final TextView home_text_contact = view.findViewById(R.id.textView10);
+        final TextView home_text_client_name = view.findViewById(R.id.home_client_name);
+        final TextView home_text_contact = view.findViewById(R.id.home_client_number);
+        final TextView home_text_queue = view.findViewById(R.id.home_queue);
 
         final List<String> taskList = new ArrayList<String>();
         taskList.add("DELIVER 1 (1km away)");
@@ -80,38 +89,111 @@ public class HomeFragment extends Fragment {
         home_text_longitude.setVisibility(View.INVISIBLE);
         home_text_client_name.setVisibility(View.INVISIBLE);
         home_text_contact.setVisibility(View.INVISIBLE);
+        home_text_queue.setVisibility(View.INVISIBLE);
+
+        home_text_queue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                home_button.setText("START");
+                home_dropdown_task.setEnabled(true);
+                home_text_timestarted.setVisibility(View.INVISIBLE);
+                home_text_latitude.setVisibility(View.INVISIBLE);
+                home_text_location.setVisibility(View.INVISIBLE);
+                home_text_longitude.setVisibility(View.INVISIBLE);
+                home_text_client_name.setVisibility(View.INVISIBLE);
+                home_text_contact.setVisibility(View.INVISIBLE);
+                home_text_queue.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        home_text_contact.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                builder.setTitle("Contact Client");
+                builder.setMessage("Do you want to Call the Client?");
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if (Build.VERSION.SDK_INT >= 23) {
+                            if (ActivityCompat.checkSelfPermission(getContext(),
+                                    Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+
+                                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CALL_PHONE}, 1);
+                            } else {
+                                Intent callIntent = new Intent(Intent.ACTION_CALL);
+                                callIntent.setData(Uri.parse("tel:" + home_text_contact.getText()));
+                                startActivity(callIntent);
+                            }
+
+                        }else {
+                            Intent callIntent = new Intent(Intent.ACTION_CALL);
+                            callIntent.setData(Uri.parse("tel:" + home_text_contact.getText()));
+                            startActivity(callIntent);
+                        }
+                    }
+                });
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+
+                builder.show();
+            }
+        });
 
         home_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Delivery start
-                if(taskList.size() >= 1) {
-                    if(home_button.getText().equals("START")) {
+                if(taskList.size() >= 1 ) {
+                    if(home_dropdown_task.getSelectedItemPosition() != 0) {
+                        if(home_button.getText().equals("START")) {
 
-                        home_button.setText("DELIVERED");
-                        home_dropdown_task.setEnabled(false);
-                        home_text_timestarted.setVisibility(View.VISIBLE);
-                        home_text_timestarted.setText(String.format("Time Started: %s", getTime()));
-                        home_text_latitude.setVisibility(View.VISIBLE);
-                        home_text_location.setVisibility(View.VISIBLE);
-                        home_text_longitude.setVisibility(View.VISIBLE);
-                        home_text_client_name.setVisibility(View.VISIBLE);
-                        home_text_contact.setVisibility(View.VISIBLE);
+                            home_button.setText("DELIVERED");
+                            home_dropdown_task.setEnabled(false);
+                            home_text_timestarted.setVisibility(View.VISIBLE);
+                            home_text_timestarted.setText(String.format("Time Started: %s", getTime()));
+                            home_text_latitude.setVisibility(View.VISIBLE);
+                            home_text_location.setVisibility(View.VISIBLE);
+                            home_text_longitude.setVisibility(View.VISIBLE);
+                            home_text_client_name.setVisibility(View.VISIBLE);
+                            home_text_contact.setVisibility(View.VISIBLE);
+                            home_text_queue.setVisibility(View.VISIBLE);
 
-                        //Delivery Done
+                            //Delivery Done
+                        } else {
+                            home_button.setText("START");
+                            home_dropdown_task.setEnabled(true);
+                            home_text_timestarted.setVisibility(View.INVISIBLE);
+                            home_text_latitude.setVisibility(View.INVISIBLE);
+                            home_text_location.setVisibility(View.INVISIBLE);
+                            home_text_longitude.setVisibility(View.INVISIBLE);
+                            home_text_client_name.setVisibility(View.INVISIBLE);
+                            home_text_contact.setVisibility(View.INVISIBLE);
+                            home_text_queue.setVisibility(View.INVISIBLE);
+
+                            taskList.remove(home_dropdown_task.getSelectedItemPosition() - 1);
+                            home_dropdown_task.setAdapter(taskAdapter);
+                            if(taskList.size() != 0) {
+                                home_dropdown_task.setSelection(1);
+                            } else {
+                                home_dropdown_task.setHint("");
+                            }
+                        }
                     } else {
-                        home_button.setText("START");
-                        home_dropdown_task.setEnabled(true);
-                        home_text_timestarted.setVisibility(View.INVISIBLE);
-                        home_text_latitude.setVisibility(View.INVISIBLE);
-                        home_text_location.setVisibility(View.INVISIBLE);
-                        home_text_longitude.setVisibility(View.INVISIBLE);
-                        home_text_client_name.setVisibility(View.INVISIBLE);
-                        home_text_contact.setVisibility(View.INVISIBLE);
-                        taskList.remove(home_dropdown_task.getSelectedItemPosition());
-                        home_dropdown_task.setAdapter(taskAdapter);
-
+                        AlertDialog.Builder alert_select_task = new AlertDialog.Builder(view.getContext());
+                        alert_select_task.setMessage("Please Select Task First before pressing START button");
+                        alert_select_task.setPositiveButton("OKAY", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                            }
+                        });
+                        alert_select_task.show();
                     }
+
                 }
 
                 if(taskList.size() < 1  ) {
@@ -124,6 +206,8 @@ public class HomeFragment extends Fragment {
                         home_text_longitude.setVisibility(View.INVISIBLE);
                         home_text_client_name.setVisibility(View.INVISIBLE);
                         home_text_contact.setVisibility(View.INVISIBLE);
+                        home_text_queue.setVisibility(View.INVISIBLE);
+
                     } else {
                         AlertDialog.Builder dialog = new AlertDialog.Builder(view.getContext());
                         dialog.setTitle("Congratulations");
@@ -139,6 +223,7 @@ public class HomeFragment extends Fragment {
                         home_button.setVisibility(View.INVISIBLE);
                     }
                 }
+
             }
         });
 
