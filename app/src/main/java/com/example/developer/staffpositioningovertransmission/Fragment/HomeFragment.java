@@ -2,30 +2,22 @@ package com.example.developer.staffpositioningovertransmission.Fragment;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.util.Log;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.example.developer.staffpositioningovertransmission.MainActivity;
-import com.example.developer.staffpositioningovertransmission.R;
-
-import  android.support.v4.app.Fragment;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.example.developer.staffpositioningovertransmission.R;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -126,7 +118,7 @@ public class HomeFragment extends Fragment {
                                 startActivity(callIntent);
                             }
 
-                        }else {
+                        } else {
                             Intent callIntent = new Intent(Intent.ACTION_CALL);
                             callIntent.setData(Uri.parse("tel:" + home_text_contact.getText()));
                             startActivity(callIntent);
@@ -147,9 +139,9 @@ public class HomeFragment extends Fragment {
         home_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(taskList.size() >= 1 ) {
-                    if(home_dropdown_task.getSelectedItemPosition() != 0) {
-                        if(home_button.getText().equals("START")) {
+                if (taskList.size() >= 1) {
+                    if (home_dropdown_task.getSelectedItemPosition() != 0) {
+                        if (home_button.getText().equals("START")) {
 
                             home_button.setText("DELIVERED");
                             home_dropdown_task.setEnabled(false);
@@ -176,7 +168,7 @@ public class HomeFragment extends Fragment {
 
                             taskList.remove(home_dropdown_task.getSelectedItemPosition() - 1);
                             home_dropdown_task.setAdapter(taskAdapter);
-                            if(taskList.size() != 0) {
+                            if (taskList.size() != 0) {
                                 home_dropdown_task.setSelection(1);
                             } else {
                                 home_dropdown_task.setHint("");
@@ -196,8 +188,8 @@ public class HomeFragment extends Fragment {
 
                 }
 
-                if(taskList.size() < 1  ) {
-                    if(!home_button.getText().equals("END RECORDING")) {
+                if (taskList.size() < 1) {
+                    if (!home_button.getText().equals("END RECORDING")) {
                         home_button.setText("END RECORDING");
                         home_dropdown_task.setEnabled(true);
                         home_text_timestarted.setVisibility(View.INVISIBLE);

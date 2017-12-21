@@ -2,17 +2,15 @@ package com.example.developer.staffpositioningovertransmission.Fragment;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.TextView;
-import android.text.InputType;
 import android.widget.TimePicker;
 
 import com.example.developer.staffpositioningovertransmission.R;
@@ -22,12 +20,6 @@ import java.util.Calendar;
 public class HistoryFragment extends Fragment {
 
     int timePickFlg;
-
-    private class CalendarDates {
-        int mYear;
-        int mMonth;
-        int mDay;
-    }
 
     public HistoryFragment() {
         // Required empty public constructor
@@ -61,7 +53,7 @@ public class HistoryFragment extends Fragment {
         final CalendarDates calDate = new CalendarDates();
         final Calendar cal = Calendar.getInstance();
 
-        final String[] MONTHSlist = {"January", "February", "March", "April", "May", "June", "July",
+        final String[] monthList = {"January", "February", "March", "April", "May", "June", "July",
                 "August", "September", "October", "November", "December"};
         final int timeFromFlg = 1;
         final int timeToFlg = 2;
@@ -118,7 +110,7 @@ public class HistoryFragment extends Fragment {
                     okDateTimeButton.setVisibility(View.INVISIBLE);
                     showPrimaryControls(dateText, timeFrom, timeTo, historyButton);
                 } else if (timePickFlg == dateFlg) {
-                    dateText.setText(MONTHSlist[datePicker.getMonth()] + " " + datePicker.getDayOfMonth() + ", " + datePicker.getYear());
+                    dateText.setText(monthList[datePicker.getMonth()] + " " + datePicker.getDayOfMonth() + ", " + datePicker.getYear());
                     calDate.mDay = datePicker.getDayOfMonth();
                     calDate.mYear = datePicker.getYear();
                     calDate.mMonth = datePicker.getMonth();
@@ -135,7 +127,7 @@ public class HistoryFragment extends Fragment {
             public void onClick(View v) {
                 AlertDialog.Builder alertadd = new AlertDialog.Builder(view.getContext());
 
-                alertadd.setTitle("Route history (" + MONTHSlist[calDate.mMonth] + " " + calDate.mDay + "," + calDate.mYear + ")");
+                alertadd.setTitle("Route history (" + monthList[calDate.mMonth] + " " + calDate.mDay + "," + calDate.mYear + ")");
                 LayoutInflater factory = LayoutInflater.from(view.getContext());
                 if (!dateText.getText().toString().isEmpty()) {
                     if (calDate.mDay % 2 == 0) {
@@ -173,6 +165,12 @@ public class HistoryFragment extends Fragment {
         historyButton.setVisibility(View.VISIBLE);
         timeFrom.setVisibility(View.VISIBLE);
         timeTo.setVisibility(View.VISIBLE);
+    }
+
+    private class CalendarDates {
+        int mYear;
+        int mMonth;
+        int mDay;
     }
 
 
